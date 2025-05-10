@@ -1,0 +1,24 @@
+#include <ezButton.h>
+
+#define BUTTON_PIN 22   // ESP32 pin GPIO22 connected to button's pin
+#define LED_PIN 21      // ESP32 pin GPIO23 connected to LED's pin
+
+ezButton button(BUTTON_PIN);  // create ezButton object that attach to pin 22
+
+void setup() {
+  Serial.begin(9600);               // initialize serial communication
+  button.setDebounceTime(50);       // set debounce time to 50 milliseconds
+  pinMode(LED_PIN, OUTPUT);         // set LED pin as output
+  digitalWrite(LED_PIN, LOW);       // turn off LED initially
+}
+
+void loop() {
+  button.loop();  // MUST call the loop() function first
+
+  if (button.isPressed()) {
+    // turn on the LED when button is pressed
+    digitalWrite(LED_PIN, HIGH);
+    delay(100);  // short delay to visualize the LED blink
+    digitalWrite(LED_PIN, LOW);
+  }
+}
