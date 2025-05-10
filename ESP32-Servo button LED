@@ -1,0 +1,44 @@
+#include <ESP32Servo.h>
+#include <ezButton.h>
+
+#define BUTTON_PIN 22   // ESP32 pin GPIO22 connected to button's pin
+#define SERVO_PIN 25    // ESP32 pin GPIO25 connected to servo motor's pin
+#define LED_PIN 21      // ESP32 pin GPIO23 connected to LED's pin
+
+ezButton button(BUTTON_PIN);  // create ezButton object that attach to pin 22
+Servo servo;                  // create servo object to control a servo
+
+// variables will change:
+int angle = 0;    // the current angle of servo motor
+
+void setup() {
+  Serial.begin(9600);               // initialize serial communication
+  button.setDebounceTime(50);       // set debounce time to 50 milliseconds
+  servo.attach(SERVO_PIN);          // attaches the servo on pin 25 to the servo object
+  pinMode(LED_PIN, OUTPUT);         // set LED pin as output
+  servo.write(angle);               // initialize servo position
+  digitalWrite(LED_PIN, LOW);       // turn off LED initially
+}
+
+void loop() {
+  button.loop();  // MUST call the loop() function first
+
+  if (button.isPressed()) {
+    // change angle of servo motor
+    if (angle == 0) 
+      angle = 90;
+    else if (angle == 90) 
+      angle = 0;
+
+    // control servo motor according to the angle
+    Serial.print("The button is pressed => rotate servo to ");
+    Serial.print(angle);
+    Serial.println("°");
+    servo.write(angle);
+
+    // turn on the LED when button is pressed
+    digitalWrite(LED_PIN, HIGH);
+    delay(100);  // short delay to visualize the LED blink
+    digitalWrite(LED_PIN, LOW);
+  }
+}
